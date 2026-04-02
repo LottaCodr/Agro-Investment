@@ -7,7 +7,7 @@ import {
     Newspaper,
     Users,
     FileBarChart,
-    X
+    
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,7 +54,7 @@ export function Sidebar({ userRole = "investor", isOpen, onClose }: SidebarProps
                 )}
             >
                 {/* Logo */}
-                <div className="flex items-center justify-between px-6 py-7 border-b border-sidebar-border">
+                {/* <div className="flex items-center justify-between px-6 py-7 border-b border-sidebar-border">
                     <Link to="/" className="flex items-center gap-2 group">
                         <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
                             <span className="text-primary-foreground font-bold text-base tracking-wide">AYF</span>
@@ -76,7 +76,7 @@ export function Sidebar({ userRole = "investor", isOpen, onClose }: SidebarProps
                     >
                         <X className="w-5 h-5 text-muted-foreground" />
                     </button>
-                </div>
+                </div> */}
 
                 {/* Navigation */}
                 <nav className="flex-1 flex flex-col px-2 py-6 gap-0">
