@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { ArrowUpRight, ArrowDownRight, MinusCircle } from "lucide-react";
 
 export default function TransactionsPage() {
     const transactions = [
@@ -8,41 +9,91 @@ export default function TransactionsPage() {
         { id: 4, type: "Withdrawal", farm: "-", amount: 1000, date: "2024-11-20", status: "completed" },
     ];
 
+    const getTypeIcon = (type: string) => {
+        if (type === "Investment") return <ArrowUpRight className="w-4 h-4" style={{ color: "#1a4a2e" }} />;
+        if (type === "ROI Payout") return <ArrowDownRight className="w-4 h-4" style={{ color: "#c8903c" }} />;
+        return <MinusCircle className="w-4 h-4" style={{ color: "#5a6b5e" }} />;
+    };
+
+    const getTypeBadgeStyle = (type: string) => {
+        if (type === "Investment") return { background: "rgba(14,42,26,0.06)", color: "#1a4a2e", border: "1px solid rgba(14,42,26,0.15)" };
+        if (type === "ROI Payout") return { background: "rgba(200,144,60,0.08)", color: "#c8903c", border: "1px solid rgba(200,144,60,0.2)" };
+        return { background: "rgba(90,107,94,0.06)", color: "#5a6b5e", border: "1px solid rgba(90,107,94,0.15)" };
+    };
+
+    const getAmountStyle = (type: string) => {
+        if (type === "ROI Payout") return { color: "#c8903c" };
+        if (type === "Withdrawal") return { color: "#5a6b5e" };
+        return { color: "#1a4a2e" };
+    };
+
     return (
         <DashboardLayout userRole="investor">
             <div className="space-y-6 animate-fade-in">
-                <div>
-                    <h1 className="text-2xl font-bold text-foreground">Transactions</h1>
-                    <p className="text-muted-foreground">View your investment and payout history.</p>
+                {/* Page Header */}
+                <div className="page-header">
+                    <p className="section-tag">History</p>
+                    <h1 className="page-header-title">Transactions</h1>
+                    <p className="page-header-subtitle">
+                        View your investment and payout history.
+                    </p>
                 </div>
 
-                <div className="bg-card rounded-xl border border-border overflow-hidden">
-                    <table className="w-full">
-                        <thead className="bg-muted">
+                {/* Table */}
+                <div
+                    className="rounded-2xl overflow-hidden"
+                    style={{
+                        background: "white",
+                        border: "1px solid hsl(34 25% 85%)",
+                    }}
+                >
+                    <table className="ayf-table">
+                        <thead>
                             <tr>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-muted-foreground">Type</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-muted-foreground">Farm</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-muted-foreground">Amount</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-muted-foreground">Date</th>
-                                <th className="text-left px-6 py-4 text-sm font-medium text-muted-foreground">Status</th>
+                                <th>Type</th>
+                                <th>Farm</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             {transactions.map((tx, index) => (
                                 <tr
                                     key={tx.id}
-                                    className="border-t border-border animate-slide-up"
+                                    className="animate-slide-up"
                                     style={{ animationDelay: `${index * 50}ms` }}
                                 >
-                                    <td className="px-6 py-4 font-medium">{tx.type}</td>
-                                    <td className="px-6 py-4 text-muted-foreground">{tx.farm}</td>
-                                    <td className="px-6 py-4">
-                                        <span className={tx.type === "ROI Payout" ? "text-primary" : ""}>
+                                    <td>
+                                        <div className="flex items-center gap-2.5">
+                                            <div
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                                                style={{ background: getTypeBadgeStyle(tx.type).background }}
+                                            >
+                                                {getTypeIcon(tx.type)}
+                                            </div>
+                                            <span
+                                                className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                                                style={getTypeBadgeStyle(tx.type)}
+                                            >
+                                                {tx.type}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td style={{ color: "#5a6b5e" }}>{tx.farm}</td>
+                                    <td>
+                                        <span className="font-semibold" style={getAmountStyle(tx.type)}>
                                             {tx.type === "Withdrawal" ? "-" : "+"}${tx.amount.toLocaleString()}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-muted-foreground">{tx.date}</td>
-                                    <td className="px-6 py-4">
+                                    <td style={{ color: "#5a6b5e" }}>
+                                        {new Date(tx.date).toLocaleDateString("en-US", {
+                                            month: "short",
+                                            day: "numeric",
+                                            year: "numeric",
+                                        })}
+                                    </td>
+                                    <td>
                                         <span className="badge-active capitalize">{tx.status}</span>
                                     </td>
                                 </tr>

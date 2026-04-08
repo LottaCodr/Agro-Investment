@@ -7,7 +7,8 @@ import {
     Newspaper,
     Users,
     FileBarChart,
-    
+    X,
+    Sprout,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +20,7 @@ interface SidebarProps {
 
 const investorNavItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/my-investments", label: "My Investment", icon: FolderOpen },
+    { href: "/my-investments", label: "My Investments", icon: FolderOpen },
     { href: "/transactions", label: "Transactions", icon: Receipt },
     { href: "/discover", label: "Discover Farms", icon: Search },
     { href: "/news", label: "News & Updates", icon: Newspaper },
@@ -27,7 +28,7 @@ const investorNavItems = [
 
 const adminNavItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/admin/farms", label: "Farms", icon: FolderOpen },
+    { href: "/admin/farms", label: "Farms", icon: Sprout },
     { href: "/admin/investors", label: "Investors", icon: Users },
     { href: "/admin/transactions", label: "Transactions", icon: Receipt },
     { href: "/admin/reports", label: "Reports", icon: FileBarChart },
@@ -42,44 +43,65 @@ export function Sidebar({ userRole = "investor", isOpen, onClose }: SidebarProps
             {/* Mobile overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-40 lg:hidden"
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
                     onClick={onClose}
                 />
             )}
 
             <aside
                 className={cn(
-                    "fixed left-0 top-0 z-50 h-full w-[236px] bg-sidebar border-r border-sidebar-border flex flex-col transition-transform duration-300 lg:translate-x-0",
+                    "fixed left-0 top-0 z-50 h-full w-[260px] flex flex-col transition-transform duration-300 lg:translate-x-0",
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 )}
+                style={{
+                    background: "linear-gradient(180deg, #0e2a1a 0%, #122e1f 100%)",
+                    borderRight: "1px solid rgba(255,255,255,0.06)",
+                }}
             >
                 {/* Logo */}
-                {/* <div className="flex items-center justify-between px-6 py-7 border-b border-sidebar-border">
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                            <span className="text-primary-foreground font-bold text-base tracking-wide">AYF</span>
+                <div className="flex items-center justify-between px-6 py-6">
+                    <Link to="/" className="flex items-center gap-3 group">
+                        <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{ background: "#c8903c" }}
+                        >
+                            <span className="text-white font-bold text-sm tracking-wide" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                AYF
+                            </span>
                         </div>
-                        <div className="flex flex-col leading-tight ml-1">
-                            <span className="text-base font-extrabold text-foreground">
+                        <div className="flex flex-col leading-tight">
+                            <span className="text-sm font-semibold text-white/90 tracking-tight">
                                 African Youth
                             </span>
-                            <span className="text-base font-extrabold text-primary">
+                            <span className="text-sm font-semibold" style={{ color: "#c8903c" }}>
                                 Forum
                             </span>
                         </div>
                     </Link>
                     <button
                         onClick={onClose}
-                        className="lg:hidden p-1 hover:bg-muted rounded"
+                        className="lg:hidden p-1.5 hover:bg-white/10 rounded-lg transition-colors"
                         aria-label="Close Sidebar"
-                        tabIndex={0}
                     >
-                        <X className="w-5 h-5 text-muted-foreground" />
+                        <X className="w-5 h-5 text-white/60" />
                     </button>
-                </div> */}
+                </div>
+
+                {/* Divider */}
+                <div className="mx-5 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+
+                {/* Role Badge */}
+                <div className="px-6 py-4">
+                    <span
+                        className="text-[10px] font-semibold tracking-[2px] uppercase"
+                        style={{ color: "rgba(200,144,60,0.6)" }}
+                    >
+                        {userRole === "admin" ? "Admin Panel" : "Investor"}
+                    </span>
+                </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 flex flex-col px-2 py-6 gap-0">
+                <nav className="flex-1 flex flex-col px-3 gap-1">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.href;
@@ -90,15 +112,20 @@ export function Sidebar({ userRole = "investor", isOpen, onClose }: SidebarProps
                                 to={item.href}
                                 onClick={onClose}
                                 className={cn(
-                                    "flex items-center gap-3 px-4 py-2 rounded-none font-medium text-sm transition-colors",
+                                    "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                                     isActive
-                                        ? "bg-primary/10 text-primary font-semibold border-l-4 border-primary"
-                                        : "text-muted-foreground hover:bg-muted",
-                                    "mb-1"
+                                        ? "text-white font-semibold"
+                                        : "text-white/50 hover:text-white/80 hover:bg-white/5"
                                 )}
-                                style={{ boxShadow: 'none', backgroundImage: 'none' }}
+                                style={isActive ? {
+                                    background: "rgba(200,144,60,0.12)",
+                                    borderLeft: "3px solid #c8903c",
+                                } : {}}
                             >
-                                <Icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-muted-foreground")} />
+                                <Icon
+                                    className="w-[18px] h-[18px]"
+                                    style={isActive ? { color: "#c8903c" } : {}}
+                                />
                                 <span>{item.label}</span>
                             </Link>
                         );
@@ -106,8 +133,8 @@ export function Sidebar({ userRole = "investor", isOpen, onClose }: SidebarProps
                 </nav>
 
                 {/* Footer */}
-                <div className="px-6 py-5 border-t border-sidebar-border">
-                    <p className="text-xs text-muted-foreground font-semibold tracking-tight">
+                <div className="px-6 py-5" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                    <p className="text-[11px] font-medium" style={{ color: "rgba(255,255,255,0.25)" }}>
                         © 2026 African Youth Forum
                     </p>
                 </div>

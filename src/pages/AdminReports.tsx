@@ -2,24 +2,10 @@ import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import {
-    Table,
-    TableHeader,
-    TableRow,
-    TableHead,
-    TableBody,
-    TableCell,
+    Table, TableHeader, TableRow, TableHead, TableBody, TableCell,
 } from "@/components/ui/table";
 import {
-    TrendingUp,
-    Users,
-    Banknote,
-    ListChecks,
-    Activity,
-    Search,
-    ChevronLeft,
-    ChevronRight,
-    Mail,
-    Phone,
+    TrendingUp, Users, Banknote, ListChecks, Activity, Search, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,34 +14,10 @@ function formatCurrency(num: number) {
 }
 
 const stats = [
-    {
-        label: "Total Amount Invested",
-        value: formatCurrency(50420000),
-        icon: <Banknote className="w-4 h-4 text-primary" />,
-        trend: "+5%",
-        trendLabel: "from last month",
-    },
-    {
-        label: "Total Investors",
-        value: "424",
-        icon: <Users className="w-4 h-4 text-primary" />,
-        trend: "+12",
-        trendLabel: "new this month",
-    },
-    {
-        label: "Opportunities Created",
-        value: "17",
-        icon: <ListChecks className="w-4 h-4 text-primary" />,
-        trend: "+2",
-        trendLabel: "new this month",
-    },
-    {
-        label: "Platform Revenue",
-        value: formatCurrency(2249000),
-        icon: <Activity className="w-4 h-4 text-primary" />,
-        trend: "+3%",
-        trendLabel: "from last month",
-    },
+    { label: "Total Amount Invested", value: formatCurrency(50420000), icon: <Banknote className="w-4 h-4" style={{ color: "#1a4a2e" }} />, trend: "+5%", trendLabel: "from last month" },
+    { label: "Total Investors", value: "424", icon: <Users className="w-4 h-4" style={{ color: "#1a4a2e" }} />, trend: "+12", trendLabel: "new this month" },
+    { label: "Opportunities Created", value: "17", icon: <ListChecks className="w-4 h-4" style={{ color: "#1a4a2e" }} />, trend: "+2", trendLabel: "new this month" },
+    { label: "Platform Revenue", value: formatCurrency(2249000), icon: <Activity className="w-4 h-4" style={{ color: "#1a4a2e" }} />, trend: "+3%", trendLabel: "from last month" },
 ];
 
 const topInvestorsSeed = [
@@ -67,10 +29,10 @@ const topInvestorsSeed = [
 ];
 
 const recentActivities = [
-    { id: 1, time: "2024-06-15 09:54", type: "New Investment", details: "₦1,200,000 by Sarah Knox (Wheat Rolls Valley)", icon: <Banknote className="w-4 h-4 text-green-600" />, color: "bg-green-100" },
-    { id: 2, time: "2024-06-14 15:23", type: "ROI Paid", details: "₦320,000 to Adeoye Mutiu (Cassava Plantation Co.)", icon: <Activity className="w-4 h-4 text-blue-600" />, color: "bg-blue-100" },
-    { id: 3, time: "2024-06-13 18:21", type: "New Investor", details: "Chika Eze joined platform", icon: <Users className="w-4 h-4 text-primary" />, color: "bg-primary/10" },
-    { id: 4, time: "2024-06-13 11:11", type: "Investment Withdrawal", details: "₦200,000 withdrawn by Yusuf Bola", icon: <TrendingUp className="w-4 h-4 text-yellow-700" />, color: "bg-yellow-100" }
+    { id: 1, time: "2024-06-15 09:54", type: "New Investment", details: "₦1,200,000 by Sarah Knox (Wheat Rolls Valley)", icon: <Banknote className="w-4 h-4" style={{ color: "#1a4a2e" }} />, color: "rgba(14,42,26,0.06)" },
+    { id: 2, time: "2024-06-14 15:23", type: "ROI Paid", details: "₦320,000 to Adeoye Mutiu (Cassava Plantation Co.)", icon: <Activity className="w-4 h-4" style={{ color: "#c8903c" }} />, color: "rgba(200,144,60,0.08)" },
+    { id: 3, time: "2024-06-13 18:21", type: "New Investor", details: "Chika Eze joined platform", icon: <Users className="w-4 h-4" style={{ color: "#2d6b47" }} />, color: "rgba(45,107,71,0.06)" },
+    { id: 4, time: "2024-06-13 11:11", type: "Investment Withdrawal", details: "₦200,000 withdrawn by Yusuf Bola", icon: <TrendingUp className="w-4 h-4" style={{ color: "#5a6b5e" }} />, color: "rgba(90,107,94,0.06)" }
 ];
 
 const PAGE_SIZE = 3;
@@ -79,19 +41,13 @@ export default function AdminReportsPage() {
     const [investorSearch, setInvestorSearch] = useState("");
     const [page, setPage] = useState(1);
 
-    // Enhanced search for investor name/email/phone
     const filteredInvestors = topInvestorsSeed.filter(inv =>
-        [inv.name, inv.email, inv.phone]
-            .join(" ")
-            .toLowerCase()
-            .includes(investorSearch.toLowerCase())
+        [inv.name, inv.email, inv.phone].join(" ").toLowerCase().includes(investorSearch.toLowerCase())
     );
 
-    // Pagination logic
     const totalPages = Math.ceil(filteredInvestors.length / PAGE_SIZE);
     const pagedInvestors = filteredInvestors.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-    // If search input changes, reset page
     function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
         setInvestorSearch(e.target.value);
         setPage(1);
@@ -99,171 +55,128 @@ export default function AdminReportsPage() {
 
     return (
         <DashboardLayout userRole="admin">
-            <div className="max-w-screen-2xl mx-auto px-4 mb-10 animate-fade-in space-y-8">
-                {/* Page header & hierarchy */}
-                <header className="pt-6 pb-2 flex flex-col gap-1">
-                    <span className="text-xs text-muted-foreground">Admin &raquo; Reports</span>
-                    <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                        Reports & Platform Analytics
-                    </h1>
-                    <p className="text-base text-muted-foreground">
+            <div className="space-y-8 animate-fade-in">
+                {/* Page Header */}
+                <div className="page-header">
+                    <p className="section-tag">Admin › Reports</p>
+                    <h1 className="page-header-title">Reports & Analytics</h1>
+                    <p className="page-header-subtitle">
                         Visualize platform performance, key numbers, and leading investors.
                     </p>
-                </header>
+                </div>
 
-                {/* Stats summary cards - Add subtle hover effect, focus outlines */}
-                <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Stats */}
+                <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                     {stats.map((stat) => (
-                        <div key={stat.label} tabIndex={0} aria-label={stat.label}
-                            className="transition ring-primary/15 focus-visible:ring-4 focus-visible:outline-none hover:shadow-md duration-150"
-                        >
-                            <StatsCard
-                                label={stat.label}
-                                value={stat.value}
-                                icon={stat.icon}
-                                trend={stat.trend}
-                                trendLabel={stat.trendLabel}
-                            />
-                        </div>
+                        <StatsCard key={stat.label} label={stat.label} value={stat.value} icon={stat.icon} trend={stat.trend} trendLabel={stat.trendLabel} />
                     ))}
                 </section>
 
                 <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Top Investors Table with search and pagination */}
-                    <section className="flex-1 bg-card rounded-xl border border-border overflow-x-auto">
-                        <header className="px-6 py-4 border-b border-border flex items-center justify-between gap-2 flex-wrap">
-                            <h2 className="text-lg font-bold tracking-tight text-foreground">Top Investors</h2>
-                            <div className="flex items-center gap-2">
-                                <div className="relative">
-                                    <span className="absolute left-2 top-2 text-muted-foreground"><Search className="w-4 h-4" /></span>
-                                    <input
-                                        type="text"
-                                        placeholder="Search by name, email, or phone"
-                                        value={investorSearch}
-                                        onChange={handleSearch}
-                                        className="border border-border rounded-lg py-1.5 pl-8 pr-2 text-sm bg-background focus:outline-none focus:border-primary transition w-48"
-                                        aria-label="Search investors"
-                                    />
-                                </div>
+                    {/* Top Investors */}
+                    <section
+                        className="flex-1 rounded-2xl overflow-x-auto"
+                        style={{ background: "white", border: "1px solid hsl(34 25% 85%)" }}
+                    >
+                        <header className="px-6 py-4 flex items-center justify-between flex-wrap gap-2" style={{ borderBottom: "1px solid hsl(34 25% 85%)" }}>
+                            <h2
+                                className="text-lg font-semibold"
+                                style={{ color: "#0e2a1a", fontFamily: "'Cormorant Garamond', serif" }}
+                            >
+                                Top Investors
+                            </h2>
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2 w-4 h-4" style={{ color: "#5a6b5e" }} />
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    value={investorSearch}
+                                    onChange={handleSearch}
+                                    className="py-1.5 pl-8 pr-3 text-sm rounded-xl focus:outline-none w-48"
+                                    style={{ background: "#f7f3ed", border: "1px solid hsl(34 25% 85%)", color: "#0e2a1a" }}
+                                />
                             </div>
                         </header>
-                        <Table className="w-full min-w-[700px]">
+                        <Table className="w-full min-w-[600px]">
                             <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-44">Name</TableHead>
-                                    <TableHead className="w-40">Email</TableHead>
-                                    <TableHead className="w-32">Phone</TableHead>
-                                    <TableHead className="w-32 text-center">Total Invested</TableHead>
-                                    <TableHead className="w-24 text-center">Projects</TableHead>
+                                <TableRow style={{ background: "hsl(34 30% 90%)" }}>
+                                    <TableHead className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "#5a6b5e" }}>Name</TableHead>
+                                    <TableHead className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "#5a6b5e" }}>Email</TableHead>
+                                    <TableHead className="text-center text-[11px] font-semibold uppercase tracking-wider" style={{ color: "#5a6b5e" }}>Total Invested</TableHead>
+                                    <TableHead className="text-center text-[11px] font-semibold uppercase tracking-wider" style={{ color: "#5a6b5e" }}>Projects</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {pagedInvestors.length > 0 ? (
-                                    pagedInvestors.map((inv, idx) => (
-                                        <TableRow
-                                            key={inv.id}
-                                            className={cn(
-                                                "border-t border-border group transition hover:bg-muted/30",
-                                                idx % 2 === 1 ? "bg-muted/10" : ""
-                                            )}
-                                        >
-                                            <TableCell className="font-medium text-foreground flex gap-2 items-center">
-                                                <span className="rounded bg-primary/10 px-2 py-1 text-xs font-bold text-primary">
-                                                    #{inv.id}
-                                                </span>
-                                                {inv.name}
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground flex items-center gap-1">
-                                                <Mail className="w-4 h-4 inline-block text-muted-foreground/60" />
-                                                <span className="truncate">{inv.email}</span>
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground flex items-center gap-1">
-                                                <Phone className="w-4 h-4 inline-block text-muted-foreground/60" />
-                                                <span className="truncate">{inv.phone}</span>
-                                            </TableCell>
-                                            <TableCell className="text-center">{formatCurrency(inv.invested)}</TableCell>
-                                            <TableCell className="text-center">{inv.projects}</TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                                            No investors found.
+                                {pagedInvestors.length > 0 ? pagedInvestors.map((inv, idx) => (
+                                    <TableRow key={inv.id} className="transition-colors hover:bg-[#f7f3ed]/60" style={{ borderColor: "hsl(34 25% 85%)" }}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <span className="rounded-lg px-2 py-0.5 text-[10px] font-bold" style={{ background: "rgba(14,42,26,0.06)", color: "#1a4a2e" }}>#{inv.id}</span>
+                                                <span className="font-medium" style={{ color: "#0e2a1a" }}>{inv.name}</span>
+                                            </div>
                                         </TableCell>
+                                        <TableCell style={{ color: "#5a6b5e" }}>{inv.email}</TableCell>
+                                        <TableCell className="text-center font-medium" style={{ color: "#0e2a1a" }}>{formatCurrency(inv.invested)}</TableCell>
+                                        <TableCell className="text-center" style={{ color: "#0e2a1a" }}>{inv.projects}</TableCell>
+                                    </TableRow>
+                                )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={4} className="text-center py-8" style={{ color: "#5a6b5e" }}>No investors found.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
                         </Table>
-                        {/* Pagination Controls */}
                         {totalPages > 1 && (
-                            <footer className="px-6 py-3 flex gap-4 items-center justify-end border-t border-border bg-muted/20 rounded-b-xl">
-                                <button
-                                    onClick={() => setPage(page - 1)}
-                                    disabled={page === 1}
-                                    className={cn(
-                                        "rounded-lg px-2.5 py-1 text-sm font-semibold border border-border hover:bg-muted transition disabled:opacity-60 disabled:cursor-not-allowed"
-                                    )}
-                                    aria-label="Previous page"
-                                >
+                            <footer className="px-6 py-3 flex gap-4 items-center justify-end" style={{ borderTop: "1px solid hsl(34 25% 85%)", background: "hsl(34 30% 94%)" }}>
+                                <button onClick={() => setPage(page - 1)} disabled={page === 1} className="rounded-lg px-2.5 py-1 text-sm font-semibold transition disabled:opacity-40" style={{ border: "1px solid hsl(34 25% 85%)", color: "#0e2a1a" }}>
                                     <ChevronLeft className="w-4 h-4" />
                                 </button>
-                                <span className="text-xs text-muted-foreground">
-                                    Page {page} of {totalPages}
-                                </span>
-                                <button
-                                    onClick={() => setPage(page + 1)}
-                                    disabled={page === totalPages}
-                                    className={cn(
-                                        "rounded-lg px-2.5 py-1 text-sm font-semibold border border-border hover:bg-muted transition disabled:opacity-60 disabled:cursor-not-allowed"
-                                    )}
-                                    aria-label="Next page"
-                                >
+                                <span className="text-xs" style={{ color: "#5a6b5e" }}>Page {page} of {totalPages}</span>
+                                <button onClick={() => setPage(page + 1)} disabled={page === totalPages} className="rounded-lg px-2.5 py-1 text-sm font-semibold transition disabled:opacity-40" style={{ border: "1px solid hsl(34 25% 85%)", color: "#0e2a1a" }}>
                                     <ChevronRight className="w-4 h-4" />
                                 </button>
                             </footer>
                         )}
                     </section>
 
-                    {/* Recent Activity Feed */}
-                    <section className="w-full max-w-md lg:max-w-xs flex-shrink-0 bg-card rounded-xl border border-border">
-                        <header className="px-6 py-4 border-b border-border">
-                            <h2 className="text-lg font-bold tracking-tight text-foreground">Recent Activity</h2>
+                    {/* Activity Feed */}
+                    <section
+                        className="w-full max-w-md lg:max-w-xs flex-shrink-0 rounded-2xl"
+                        style={{ background: "white", border: "1px solid hsl(34 25% 85%)" }}
+                    >
+                        <header className="px-6 py-4" style={{ borderBottom: "1px solid hsl(34 25% 85%)" }}>
+                            <h2
+                                className="text-lg font-semibold"
+                                style={{ color: "#0e2a1a", fontFamily: "'Cormorant Garamond', serif" }}
+                            >
+                                Recent Activity
+                            </h2>
                         </header>
-                        <ul className="divide-y divide-border">
-                            {recentActivities.length > 0 ? (
-                                recentActivities.map((a, idx) => (
-                                    <li
-                                        key={a.id}
-                                        tabIndex={0}
-                                        className={cn(
-                                            "px-6 py-4 flex items-start gap-4 group transition hover:bg-muted/30 focus-visible:ring-2 ring-primary/30 focus:outline-none",
-                                            a.color || ""
-                                        )}
-                                        style={{ animation: `slide-up 400ms ${idx * 40}ms both` }}
+                        <ul>
+                            {recentActivities.map((a, idx) => (
+                                <li
+                                    key={a.id}
+                                    className="px-6 py-4 flex items-start gap-4 transition-colors hover:bg-[#f7f3ed]/60"
+                                    style={{
+                                        borderBottom: idx < recentActivities.length - 1 ? "1px solid hsl(34 25% 85%)" : "none",
+                                        animation: `slide-up 400ms ${idx * 40}ms both`,
+                                    }}
+                                >
+                                    <span
+                                        className="mt-0.5 flex-shrink-0 rounded-xl p-2"
+                                        style={{ background: a.color }}
                                     >
-                                        <span
-                                            className={cn(
-                                                "mt-1 flex-shrink-0 rounded-full border border-border p-1.5",
-                                                a.color || "bg-muted"
-                                            )}
-                                        >
-                                            {a.icon || <TrendingUp className="w-4 h-4" />}
-                                        </span>
-                                        <div className="flex-1">
-                                            <div className="text-xs text-muted-foreground mb-1">
-                                                {new Date(a.time).toLocaleString(undefined, {
-                                                    dateStyle: "medium",
-                                                    timeStyle: "short",
-                                                })}
-                                            </div>
-                                            <div className="font-medium text-foreground">{a.type}</div>
-                                            <div className="text-sm text-muted-foreground">{a.details}</div>
+                                        {a.icon}
+                                    </span>
+                                    <div className="flex-1">
+                                        <div className="text-[11px] mb-0.5" style={{ color: "#5a6b5e" }}>
+                                            {new Date(a.time).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                                         </div>
-                                    </li>
-                                ))
-                            ) : (
-                                <li className="py-6 text-center text-muted-foreground">No activity to show.</li>
-                            )}
+                                        <div className="font-semibold text-sm" style={{ color: "#0e2a1a" }}>{a.type}</div>
+                                        <div className="text-xs" style={{ color: "#5a6b5e" }}>{a.details}</div>
+                                    </div>
+                                </li>
+                            ))}
                         </ul>
                     </section>
                 </div>

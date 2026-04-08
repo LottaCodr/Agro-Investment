@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import type { Investment } from "@/lib/mock-data";
 
 interface InvestmentCardProps {
@@ -5,111 +6,120 @@ interface InvestmentCardProps {
 }
 
 export function InvestmentCard({ investment }: InvestmentCardProps) {
-    // Improved InfoPill for better visual contrast and spacing
-    const InfoPill = ({
-        label,
-        value,
-        bold,
-    }: {
-        label: string;
-        value: string | number;
-        bold?: boolean;
-    }) => (
-        <span
-            className={`inline-flex items-center px-3 py-1 rounded-md ${
-                bold
-                    ? "bg-[#FFF8E1] text-[#AB8300]"
-                    : "bg-muted text-foreground/90"
-            } text-[15px] font-medium mr-2 mb-2 whitespace-nowrap`}
-            style={bold ? { border: "1px solid #FFD740" } : {}}
-        >
-            {bold ? (
-                <>
-                    <span className="font-semibold mr-1">{value}</span>
-                    {label}
-                </>
-            ) : (
-                <>
-                    <span className="mr-1">{value}</span>
-                    {label}
-                </>
-            )}
-        </span>
-    );
-
     const farm = investment.farm;
 
     return (
-        <div className="rounded-xl overflow-hidden border border-border bg-white transition-shadow duration-300 group">
+        <div className="card-premium group">
+            {/* Image */}
             <div className="relative aspect-[16/10] overflow-hidden">
                 <img
                     src={farm.image}
                     alt={farm.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        background: "linear-gradient(180deg, transparent 50%, rgba(14,42,26,0.15) 100%)",
+                    }}
+                />
+                {/* Days Remaining Badge */}
+                <div
+                    className="absolute top-3 right-3 px-3 py-1 rounded-full text-[11px] font-semibold"
+                    style={{
+                        background: "rgba(200,144,60,0.9)",
+                        color: "white",
+                        backdropFilter: "blur(8px)",
+                    }}
+                >
+                    {investment.daysRemaining} Days Left
+                </div>
             </div>
+
+            {/* Body */}
             <div className="p-5 pb-4">
-                {/* Title and Days Remaining */}
-                <div className="flex items-baseline justify-between mb-1">
-                    <h3 className="font-bold text-xl text-foreground leading-snug truncate">{farm.name}</h3>
-                    <span className="ml-3 text-xs text-foreground/70 font-semibold px-2 py-0.5 rounded bg-accent">
-                        <span className="text-primary font-bold">{investment.daysRemaining}</span>{" "}Days Left
-                    </span>
-                </div>
-                <p className="text-base text-gray-500 mb-1">{farm.location}</p>
+                <h3
+                    className="font-semibold text-xl leading-snug mb-1"
+                    style={{
+                        color: "#0e2a1a",
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontWeight: 600,
+                    }}
+                >
+                    {farm.name}
+                </h3>
+                <p className="text-sm flex items-center gap-1 mb-3" style={{ color: "#5a6b5e" }}>
+                    <MapPin className="w-3 h-3" />
+                    {farm.location}
+                </p>
 
-                {/* Info Pills Row */}
-                <div className="flex flex-wrap gap-1 mb-4">
+                {/* Info Pills */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
                     {farm.acres && (
-                        <InfoPill value={farm.acres} label="Acres" bold />
+                        <span className="info-pill" style={{ fontSize: "13px" }}>
+                            <span className="font-semibold mr-1">{farm.acres}</span>Acres
+                        </span>
                     )}
-                    <InfoPill value={`${farm.roiPercentage}%`} label="ROI" bold />
-                    <InfoPill value={`${farm.durationMonths}`} label="Months" bold />
+                    <span className="info-pill" style={{ fontSize: "13px" }}>
+                        <span className="font-semibold mr-1">{farm.roiPercentage}%</span>ROI
+                    </span>
+                    <span className="info-pill" style={{ fontSize: "13px" }}>
+                        <span className="font-semibold mr-1">{farm.durationMonths}</span>Months
+                    </span>
                     {farm.harvestTime && (
-                        <InfoPill value={farm.harvestTime} label="Harvest" />
+                        <span className="info-pill-neutral" style={{ fontSize: "13px" }}>
+                            <span className="mr-1">{farm.harvestTime}</span>Harvest
+                        </span>
                     )}
                 </div>
 
-                {/* Progress bar label */}
+                {/* Progress */}
                 <div className="mb-3">
-                    <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                        <span className="uppercase tracking-wider text-[#A6A6A6]">Cycle Progress</span>
-                        <span className="text-primary">{investment.progress}%</span>
+                    <div className="flex items-center justify-between text-[11px] font-semibold mb-1.5">
+                        <span className="uppercase tracking-[1px]" style={{ color: "#5a6b5e" }}>
+                            Cycle Progress
+                        </span>
+                        <span style={{ color: "#c8903c" }}>{investment.progress}%</span>
                     </div>
-                    <div className="w-full h-2.5 rounded-full bg-[#ECECEC] overflow-hidden relative">
+                    <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "#ede5d8" }}>
                         <div
-                            className="h-full rounded-full"
+                            className="h-full rounded-full transition-all duration-700"
                             style={{
                                 width: `${investment.progress}%`,
-                                background: "#FFD740"
+                                background: "linear-gradient(90deg, #c8903c, #e8b060)",
                             }}
                         />
                     </div>
                 </div>
 
-                {/* Amount Invested & Expected Return */}
-                <div className="flex items-center justify-between text-xs mb-4">
+                {/* Amounts */}
+                <div className="flex items-center justify-between text-xs mb-4 pt-1">
                     <span>
-                        <span className="text-[#807300] font-bold">${investment.amount.toLocaleString()}</span>{" "}
-                        <span className="text-muted-foreground">invested</span>
+                        <span className="font-bold" style={{ color: "#c8903c" }}>
+                            ${investment.amount.toLocaleString()}
+                        </span>{" "}
+                        <span style={{ color: "#5a6b5e" }}>invested</span>
                     </span>
                     <span>
-                        <span className="text-green-700 font-bold">${investment.expectedReturn.toLocaleString()}</span>{" "}
-                        <span className="text-muted-foreground">expected return</span>
+                        <span className="font-bold" style={{ color: "#1a4a2e" }}>
+                            ${investment.expectedReturn.toLocaleString()}
+                        </span>{" "}
+                        <span style={{ color: "#5a6b5e" }}>expected</span>
                     </span>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-2">
+                {/* Buttons */}
+                <div className="flex gap-2.5">
                     <button
-                        className="flex-1 h-10 border border-primary text-primary font-semibold bg-white rounded-lg transition-colors hover:bg-accent focus:outline-none text-sm"
+                        className="flex-1 h-10 rounded-lg text-sm font-semibold transition-all duration-200 btn-ayf-outline"
                         type="button"
                     >
                         View Details
                     </button>
                     <button
-                        className="flex-1 h-10 bg-primary text-white font-semibold rounded-lg transition-colors hover:brightness-105 focus:outline-none text-sm"
+                        className="flex-1 h-10 rounded-lg text-sm font-bold text-white transition-all duration-200 hover:brightness-110"
                         type="button"
+                        style={{ background: "linear-gradient(135deg, #0e2a1a, #1a4a2e)" }}
                     >
                         Invest Again
                     </button>

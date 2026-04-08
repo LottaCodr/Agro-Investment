@@ -1,9 +1,7 @@
-// Install dependencies for this file with:
-// npm install @tanstack/react-router lucide-react
-
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { MapPin, ArrowRight } from "lucide-react";
 import { calculateFundingProgress, type Farm } from "@/lib/mock-data";
 
 interface FarmCardProps {
@@ -11,7 +9,6 @@ interface FarmCardProps {
     variant?: "default" | "compact";
 }
 
-// Enhanced InfoPill for bolder contrast and spacing tweaks
 function InfoPill({
     label,
     value,
@@ -23,22 +20,11 @@ function InfoPill({
 }) {
     return (
         <span
-            className={`inline-flex items-center px-3 py-1 rounded-md ${
-                bold ? "bg-[#FFF8E1] text-[#AB8300]" : "bg-muted text-foreground/90"
-            } text-[15px] font-medium mr-2 mb-2 whitespace-nowrap`}
-            style={bold ? { border: "1px solid #FFD740" } : {}}
+            className={bold ? "info-pill" : "info-pill-neutral"}
+            style={{ fontSize: "13px" }}
         >
-            {bold ? (
-                <>
-                    <span className="font-semibold mr-1">{value}</span>
-                    {label}
-                </>
-            ) : (
-                <>
-                    <span className="mr-1">{value}</span>
-                    {label}
-                </>
-            )}
+            <span className={bold ? "font-semibold mr-1" : "mr-1"}>{value}</span>
+            {label}
         </span>
     );
 }
@@ -46,114 +32,139 @@ function InfoPill({
 export function FarmCard({ farm, variant = "default" }: FarmCardProps) {
     const progress = calculateFundingProgress(farm.currentAmount, farm.targetAmount);
 
-    const statusStyles: Record<Farm["status"], string> = {
-        funding: "bg-yellow-100 text-yellow-800",
-        active: "bg-green-100 text-green-800",
-        closed: "bg-gray-200 text-gray-500"
-    };
-
     const statusBadge = {
-        funding: <Badge className={`text-xs px-2.5 py-0.5 rounded ${statusStyles.funding}`}>Funding</Badge>,
-        active: <Badge className={`text-xs px-2.5 py-0.5 rounded ${statusStyles.active}`}>Active</Badge>,
-        closed: <Badge className={`text-xs px-2.5 py-0.5 rounded ${statusStyles.closed}`}>Closed</Badge>,
+        funding: (
+            <Badge className="badge-funding text-[11px]">
+                Funding
+            </Badge>
+        ),
+        active: (
+            <Badge className="badge-active text-[11px]">
+                Active
+            </Badge>
+        ),
+        closed: (
+            <Badge className="badge-closed text-[11px]">
+                Closed
+            </Badge>
+        ),
     };
 
     if (variant === "compact") {
-        // Compact stays minimal
         return (
-            <div className="card-elevated rounded-xl overflow-hidden border border-border">
-                <div className="flex items-center gap-4 p-4">
+            <div className="card-premium p-4">
+                <div className="flex items-center gap-4">
                     <img
                         src={farm.image}
                         alt={farm.name}
-                        className="w-16 h-16 rounded-lg object-cover"
+                        className="w-16 h-16 rounded-xl object-cover"
                     />
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                             {statusBadge[farm.status as keyof typeof statusBadge]}
                         </div>
-                        <h3 className="font-semibold text-foreground truncate">{farm.name}</h3>
-                        <p className="text-sm text-muted-foreground">{farm.location}</p>
+                        <h3 className="font-semibold truncate" style={{ color: "#0e2a1a" }}>{farm.name}</h3>
+                        <p className="text-sm flex items-center gap-1" style={{ color: "#5a6b5e" }}>
+                            <MapPin className="w-3 h-3" />
+                            {farm.location}
+                        </p>
                     </div>
                 </div>
-                <div className="px-4 pb-4 flex items-center justify-between text-sm text-muted-foreground"></div>
             </div>
         );
     }
 
     return (
-        <div className="card-elevated rounded-xl overflow-hidden border border-border bg-white transition-shadow duration-300 group">
+        <div className="card-premium group">
+            {/* Image */}
             <div className="relative aspect-[16/10] overflow-hidden">
                 <img
                     src={farm.image}
                     alt={farm.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                {/* Status badge floats top-left */}
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        background: "linear-gradient(180deg, transparent 50%, rgba(14,42,26,0.15) 100%)",
+                    }}
+                />
                 <div className="absolute top-3 left-3 z-10">
                     {statusBadge[farm.status as keyof typeof statusBadge]}
                 </div>
             </div>
-            <div className="p-4 pb-3">
-                <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-semibold text-2xl leading-snug text-foreground mb-1">{farm.name}</h3>
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded bg-accent text-muted-foreground">
+
+            {/* Body */}
+            <div className="p-5 pb-4">
+                <div className="flex items-start justify-between mb-1">
+                    <h3
+                        className="font-semibold text-xl leading-snug"
+                        style={{ color: "#0e2a1a", fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}
+                    >
+                        {farm.name}
+                    </h3>
+                    <span
+                        className="text-[11px] font-semibold px-2.5 py-1 rounded-full ml-2 flex-shrink-0"
+                        style={{
+                            background: "rgba(14,42,26,0.06)",
+                            color: "#1a4a2e",
+                        }}
+                    >
                         {farm.investorCount} Investors
                     </span>
                 </div>
-                <p className="text-base text-gray-500 mb-1">{farm.location}</p>
-                {/* Info Pills Row */}
-                <div className="flex flex-wrap gap-0.5 mb-4">
+
+                <p className="text-sm flex items-center gap-1 mb-3" style={{ color: "#5a6b5e" }}>
+                    <MapPin className="w-3 h-3" />
+                    {farm.location}
+                </p>
+
+                {/* Info Pills */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
                     <InfoPill value={farm.acres} label="Acres" bold />
                     <InfoPill value={`${farm.roiPercentage}%`} label="ROI" bold />
                     <InfoPill value={`${farm.durationMonths}`} label="Months" bold />
                     <InfoPill value={farm.harvestTime} label="Harvest" />
                 </div>
 
-                {/* Progress bar and label */}
-                <div className="mb-3">
-                    <div className="flex items-center justify-between text-xs font-medium mb-1">
-                        <span className="uppercase tracking-wider text-[#A6A6A6]">Funding</span>
-                        <span className="text-primary">{progress}%</span>
+                {/* Progress */}
+                <div className="mb-4">
+                    <div className="flex items-center justify-between text-[11px] font-semibold mb-1.5">
+                        <span className="uppercase tracking-[1px]" style={{ color: "#5a6b5e" }}>
+                            Funding
+                        </span>
+                        <span style={{ color: "#c8903c" }}>{progress}%</span>
                     </div>
-                    <div className="w-full h-2.5 rounded-full bg-[#F0F0F0] overflow-hidden relative">
-                        {/* Progress bar */}
+                    <div className="w-full h-2 rounded-full overflow-hidden relative" style={{ background: "#ede5d8" }}>
                         <div
-                            className="h-full rounded-full transition-all duration-500"
+                            className="h-full rounded-full transition-all duration-700"
                             style={{
                                 width: `${progress}%`,
-                                backgroundColor: "#FFC72C"
+                                background: "linear-gradient(90deg, #c8903c, #e8b060)",
                             }}
-                        ></div>
-                        {/* Simple, non-gradient thumb at progress end */}
-                        <div
-                            className="absolute -top-1 h-4 w-4 rounded-full border-2 border-white bg-[#FFC72C] transition-all duration-500"
-                            style={{
-                                left: `calc(${progress}% - 8px)`,
-                                opacity: progress > 5 ? 1 : 0,
-                                zIndex: 2
-                            }}
-                        ></div>
+                        />
                     </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3 mt-5">
+                <div className="flex gap-2.5 mt-4">
                     <Link to={`/farm/${farm.id}`} className="w-1/2">
                         <Button
-                            className="w-full h-11 border-2 border-[#39A86B] text-[#218641] font-semibold bg-white rounded-lg transition-colors hover:bg-accent focus:outline-none text-base"
+                            className="w-full h-10 rounded-lg text-sm font-semibold transition-all duration-200 btn-ayf-outline"
                             type="button"
                             variant="outline"
                         >
-                            <span className="inline-block font-semibold tracking-tight">View Details</span>
+                            View Details
                         </Button>
                     </Link>
                     <Link to={`/farm/${farm.id}`} className="w-1/2">
                         <Button
-                            className="w-full h-11 bg-[#218641] text-white font-bold rounded-lg transition-colors hover:brightness-110 focus:outline-none text-base"
+                            className="w-full h-10 rounded-lg text-sm font-bold text-white transition-all duration-200 hover:brightness-110"
                             type="button"
+                            style={{ background: "linear-gradient(135deg, #0e2a1a, #1a4a2e)" }}
                         >
-                            <span className="inline-block font-bold tracking-tight">Invest Now</span>
+                            Invest Now
+                            <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </Button>
                     </Link>
                 </div>
