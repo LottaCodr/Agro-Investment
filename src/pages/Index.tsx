@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, TrendingUp, Shield, Users, Menu, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import farmPalmTrees from "@/assets/farm-palm-trees.jpg";
 
 export default function LandingPage() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -443,7 +444,7 @@ export default function LandingPage() {
 
                 <div className="hero-right">
                     <img
-                        src="/farm-palm-trees.jpg"
+                        src={farmPalmTrees}
                         alt="African palm tree farm"
                         className="hero-img"
                     />
