@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import type { Investment } from "@/lib/mock-data";
 
@@ -7,10 +8,10 @@ interface InvestmentCardProps {
 
 export function InvestmentCard({ investment }: InvestmentCardProps) {
     const farm = investment.farm;
+    const done = investment.status === "completed";
 
     return (
         <div className="card-premium group">
-            {/* Image */}
             <div className="relative aspect-[16/10] overflow-hidden">
                 <img
                     src={farm.image}
@@ -23,20 +24,18 @@ export function InvestmentCard({ investment }: InvestmentCardProps) {
                         background: "linear-gradient(180deg, transparent 50%, rgba(14,42,26,0.15) 100%)",
                     }}
                 />
-                {/* Days Remaining Badge */}
                 <div
                     className="absolute top-3 right-3 px-3 py-1 rounded-full text-[11px] font-semibold"
                     style={{
-                        background: "rgba(200,144,60,0.9)",
+                        background: done ? "rgba(26,74,46,0.92)" : "rgba(200,144,60,0.9)",
                         color: "white",
                         backdropFilter: "blur(8px)",
                     }}
                 >
-                    {investment.daysRemaining} Days Left
+                    {done ? "Completed" : `${investment.daysRemaining} days left`}
                 </div>
             </div>
 
-            {/* Body */}
             <div className="p-5 pb-4">
                 <h3
                     className="font-semibold text-xl leading-snug mb-1"
@@ -53,27 +52,20 @@ export function InvestmentCard({ investment }: InvestmentCardProps) {
                     {farm.location}
                 </p>
 
-                {/* Info Pills */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                    {farm.acres && (
+                    {farm.acres ? (
                         <span className="info-pill" style={{ fontSize: "13px" }}>
                             <span className="font-semibold mr-1">{farm.acres}</span>Acres
                         </span>
-                    )}
+                    ) : null}
                     <span className="info-pill" style={{ fontSize: "13px" }}>
                         <span className="font-semibold mr-1">{farm.roiPercentage}%</span>ROI
                     </span>
                     <span className="info-pill" style={{ fontSize: "13px" }}>
                         <span className="font-semibold mr-1">{farm.durationMonths}</span>Months
                     </span>
-                    {farm.harvestTime && (
-                        <span className="info-pill-neutral" style={{ fontSize: "13px" }}>
-                            <span className="mr-1">{farm.harvestTime}</span>Harvest
-                        </span>
-                    )}
                 </div>
 
-                {/* Progress */}
                 <div className="mb-3">
                     <div className="flex items-center justify-between text-[11px] font-semibold mb-1.5">
                         <span className="uppercase tracking-[1px]" style={{ color: "#5a6b5e" }}>
@@ -92,7 +84,6 @@ export function InvestmentCard({ investment }: InvestmentCardProps) {
                     </div>
                 </div>
 
-                {/* Amounts */}
                 <div className="flex items-center justify-between text-xs mb-4 pt-1">
                     <span>
                         <span className="font-bold" style={{ color: "#c8903c" }}>
@@ -104,25 +95,29 @@ export function InvestmentCard({ investment }: InvestmentCardProps) {
                         <span className="font-bold" style={{ color: "#1a4a2e" }}>
                             ${investment.expectedReturn.toLocaleString()}
                         </span>{" "}
-                        <span style={{ color: "#5a6b5e" }}>expected</span>
+                        <span style={{ color: "#5a6b5e" }}>{done ? "returned" : "expected"}</span>
                     </span>
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-2.5">
-                    <button
-                        className="flex-1 h-10 rounded-lg text-sm font-semibold transition-all duration-200 btn-ayf-outline"
-                        type="button"
-                    >
-                        View Details
-                    </button>
-                    <button
-                        className="flex-1 h-10 rounded-lg text-sm font-bold text-white transition-all duration-200 hover:brightness-110"
-                        type="button"
-                        style={{ background: "linear-gradient(135deg, #0e2a1a, #1a4a2e)" }}
-                    >
-                        Invest Again
-                    </button>
+                    <Link to={`/farm/${farm.id}`} className="flex-1">
+                        <button
+                            className="w-full h-10 rounded-lg text-sm font-semibold transition-all duration-200 btn-ayf-outline"
+                            type="button"
+                        >
+                            View Details
+                        </button>
+                    </Link>
+                    <Link to={`/farm/${farm.id}?invest=1`} className="flex-1">
+                        <button
+                            className="w-full h-10 rounded-lg text-sm font-bold text-white transition-all duration-200 hover:brightness-110 disabled:opacity-50"
+                            type="button"
+                            style={{ background: "linear-gradient(135deg, #0e2a1a, #1a4a2e)" }}
+                            disabled={farm.status === "closed"}
+                        >
+                            Invest Again
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>

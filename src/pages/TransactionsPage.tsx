@@ -1,98 +1,103 @@
+import { useMemo, useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { ArrowUpRight, ArrowDownRight, MinusCircle } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, MinusCircle, Search } from "lucide-react";
+import { useApp } from "@/lib/store";
+import { formatLongDate } from "@/lib/mock-data";
+import type { TransactionType } from "@/lib/types";
 
 export default function TransactionsPage() {
-    const transactions = [
-        { id: 1, type: "Investment", farm: "Green Palm Trees Farm", amount: 5000, date: "2024-12-10", status: "completed" },
-        { id: 2, type: "ROI Payout", farm: "Wheat Rolls Valley", amount: 750, date: "2024-12-05", status: "completed" },
-        { id: 3, type: "Investment", farm: "Cassava Plantation Co.", amount: 3000, date: "2024-11-28", status: "completed" },
-        { id: 4, type: "Withdrawal", farm: "-", amount: 1000, date: "2024-11-20", status: "completed" },
-    ];
+    const { transactions, user } = useApp();
+    const [q, setQ] = useState("");
+    const [type, setType] = useState<"All" | TransactionType>("All");
 
-    const getTypeIcon = (type: string) => {
-        if (type === "Investment") return <ArrowUpRight className="w-4 h-4" style={{ color: "#1a4a2e" }} />;
-        if (type === "ROI Payout") return <ArrowDownRight className="w-4 h-4" style={{ color: "#c8903c" }} />;
-        return <MinusCircle className="w-4 h-4" style={{ color: "#5a6b5e" }} />;
-    };
+    const mine = useMemo(() => {
+        return transactions.filter((tx) => {
+            const owned = !user || tx.userId === user.id || tx.userName === user.name;
+            const matchesType = type === "All" || tx.type === type;
+            const matchesQ =
+                !q ||
+                tx.farm.toLowerCase().includes(q.toLowerCase()) ||
+                tx.type.toLowerCase().includes(q.toLowerCase());
+            return owned && matchesType && matchesQ;
+        });
+    }, [transactions, user, q, type]);
 
-    const getTypeBadgeStyle = (type: string) => {
-        if (type === "Investment") return { background: "rgba(14,42,26,0.06)", color: "#1a4a2e", border: "1px solid rgba(14,42,26,0.15)" };
-        if (type === "ROI Payout") return { background: "rgba(200,144,60,0.08)", color: "#c8903c", border: "1px solid rgba(200,144,60,0.2)" };
-        return { background: "rgba(90,107,94,0.06)", color: "#5a6b5e", border: "1px solid rgba(90,107,94,0.15)" };
-    };
-
-    const getAmountStyle = (type: string) => {
-        if (type === "ROI Payout") return { color: "#c8903c" };
-        if (type === "Withdrawal") return { color: "#5a6b5e" };
-        return { color: "#1a4a2e" };
+    const getTypeIcon = (t: string) => {
+        if (t === "Investment") return <ArrowUpRight className="w-4 h-4 text-[#1a4a2e]" />;
+        if (t === "ROI Payout" || t === "Deposit") return <ArrowDownRight className="w-4 h-4 text-[#c8903c]" />;
+        return <MinusCircle className="w-4 h-4 text-[#5a6b5e]" />;
     };
 
     return (
         <DashboardLayout userRole="investor">
             <div className="space-y-6 animate-fade-in">
-                {/* Page Header */}
                 <div className="page-header">
                     <p className="section-tag">History</p>
                     <h1 className="page-header-title">Transactions</h1>
-                    <p className="page-header-subtitle">
-                        View your investment and payout history.
-                    </p>
+                    <p className="page-header-subtitle">Investments, payouts, deposits, and withdrawals.</p>
                 </div>
 
-                {/* Table */}
-                <div
-                    className="rounded-2xl overflow-hidden"
-                    style={{
-                        background: "white",
-                        border: "1px solid hsl(34 25% 85%)",
-                    }}
-                >
-                    <table className="ayf-table">
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1 max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5a6b5e]" />
+                        <input
+                            value={q}
+                            onChange={(e) => setQ(e.target.value)}
+                            placeholder="Search farm or type…"
+                            className="w-full h-10 pl-9 rounded-xl border border-[#e8e0d4] bg-white text-sm"
+                        />
+                    </div>
+                    <select
+                        value={type}
+                        onChange={(e) => setType(e.target.value as typeof type)}
+                        className="h-10 rounded-xl border border-[#e8e0d4] bg-white px-3 text-sm"
+                    >
+                        <option value="All">All types</option>
+                        <option>Investment</option>
+                        <option>ROI Payout</option>
+                        <option>Deposit</option>
+                        <option>Withdrawal</option>
+                    </select>
+                </div>
+
+                <div className="rounded-2xl overflow-hidden bg-white border border-[#e8e0d4] overflow-x-auto">
+                    <table className="ayf-table min-w-[720px]">
                         <thead>
                             <tr>
                                 <th>Type</th>
-                                <th>Farm</th>
+                                <th>Farm / source</th>
                                 <th>Amount</th>
                                 <th>Date</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {transactions.map((tx, index) => (
-                                <tr
-                                    key={tx.id}
-                                    className="animate-slide-up"
-                                    style={{ animationDelay: `${index * 50}ms` }}
-                                >
+                            {mine.length === 0 && (
+                                <tr>
+                                    <td colSpan={5} className="text-center py-12 text-[#5a6b5e]">
+                                        No transactions match these filters.
+                                    </td>
+                                </tr>
+                            )}
+                            {mine.map((tx) => (
+                                <tr key={tx.id}>
                                     <td>
                                         <div className="flex items-center gap-2.5">
-                                            <div
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                                                style={{ background: getTypeBadgeStyle(tx.type).background }}
-                                            >
+                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#0e2a1a]/6">
                                                 {getTypeIcon(tx.type)}
                                             </div>
-                                            <span
-                                                className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                                                style={getTypeBadgeStyle(tx.type)}
-                                            >
+                                            <span className="text-xs font-semibold px-2.5 py-1 rounded-full badge-funding">
                                                 {tx.type}
                                             </span>
                                         </div>
                                     </td>
-                                    <td style={{ color: "#5a6b5e" }}>{tx.farm}</td>
+                                    <td className="text-[#5a6b5e]">{tx.farm}</td>
                                     <td>
-                                        <span className="font-semibold" style={getAmountStyle(tx.type)}>
-                                            {tx.type === "Withdrawal" ? "-" : "+"}${tx.amount.toLocaleString()}
+                                        <span className="font-semibold" style={{ color: tx.type === "Withdrawal" ? "#5a6b5e" : "#1a4a2e" }}>
+                                            {tx.type === "Withdrawal" ? "−" : "+"}${tx.amount.toLocaleString()}
                                         </span>
                                     </td>
-                                    <td style={{ color: "#5a6b5e" }}>
-                                        {new Date(tx.date).toLocaleDateString("en-US", {
-                                            month: "short",
-                                            day: "numeric",
-                                            year: "numeric",
-                                        })}
-                                    </td>
+                                    <td className="text-[#5a6b5e]">{formatLongDate(tx.date)}</td>
                                     <td>
                                         <span className="badge-active capitalize">{tx.status}</span>
                                     </td>
